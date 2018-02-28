@@ -188,10 +188,10 @@ We have to *expand* our dynamic array when the capacity is not enough. And here 
     * *Reallocate* a bigger place for the new array
     * *Copy* the data from the old array
     * *Free* the memory of the old array
-* 
 ## Time Complexity
 * Amotized Analysis
-```C++=
+
+```C++
 template <class T>
 class Array
 {
