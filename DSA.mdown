@@ -1,0 +1,361 @@
+# C++ Notes
+>[TOC]
+>
+>[color=#1C86EE]
+
+###### tags: `C++`
+
+# Get Ready in C++
+## Operator Overloading
+* What is an "Overloading"?
+  Same function(or operator) name, different function(or operator) arguments
+* What is an operator?
+An operator is a symbol that tells the compiler to perform specific mathematical or logical manipulations.
+    * For example:
+      ```C++=
+      complex a = 2 + i,b = 3 + 2i, c; 
+      //complex is a custom type, you have to define it in advanced
+      c = a + b;
+      ```
+      In line 2, operator ```+``` tells compiler to perform *arithmetic addition* between the 2 intergers a and b.
+      
+      In fact, ```a + b``` is equivalent to ```a.operator+(b)```, which can be seen as a function ```operator+``` called by the integer a with the integer b as an argument.
+
+* Why "operator overloading"?
+It is often to define custom class(data type) in C++ programming. For a compiler, it is a must to tell it the operation in your new defined class.
+    * What's good with "operator overloading"? Can we just define some new member functions in our defined class?
+    Well, "operator overloading" is just an option. But we can look at the example below:
+    ```C++=
+    complex c1, c2, c3;
+    c3 = c1.add(c2);
+    c3 = c1 + c2;
+    ```
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;It is more clear to represent *addition* as ```+``` than ```add(int)```, isn't it?
+* Frequently-used Operator
+    * Arithmetic Operator
+        * operator `+`
+        `T operator+(T)`       `
+        * operator `-`
+        `T operator-(T)` 
+        * operator `*`
+        `T operator*(T)`
+        * operator `/`
+        `T operator/(T)`
+    * I/O Operator
+        * operator ` << `
+        `friend ostream& operator<< (ostream& os, const T&)`
+            note: return `os`
+        * operator `>>`
+          `friend istream& operator>> (istream& ifs, T&)`
+          note: return `ifs`
+    * Prefix and Postfix Operator (We will come back when we encounter)
+        * Prefix increment: `++x`
+        * Postfix increment: `x++`
+        * Prefix decrement : `--x`
+        * Postfix decrement: `x--`
+* An operator overloading example:
+```C++=
+#include <iostream>
+#include <string>
+using namespace std;
+//global function: used in operator >> (parsing)
+double myStr2double(const string& str)
+{
+   double num = 0.0;
+   size_t i = 0;
+   int sign = 1;
+   if (str[0] == '-') { sign = -1; i = 1; }
+   for (; i < str.size(); ++i) {
+      if (isdigit(str[i])) {
+         num *= 10;
+         num += int(str[i] - '0');
+      }
+      else return false;
+   }
+   num *= sign;
+   return num;
+}
+
+class complex
+{
+public:
+    //constructor
+    complex(){real = 0; imaginary = 0;}
+    complex(double a, double b){real = a; imaginary = b;}
+    //arithmetic operator overloading
+    complex operator+(complex c2)
+    {
+        return complex(real + c2.real, imaginary + c2.imaginary);
+    }
+    complex operator-(complex c2)
+    {
+        return complex(real - c2.real, imaginary - c2.imaginary);
+    }
+    complex operator*(complex c2)
+    {
+        return complex(real*c2.real - imaginary*c2.imaginary, real*c2.imaginary + imaginary*c2.real);
+    }
+    complex operator/(complex c2)
+    {
+        //exception
+        if(c2.real*c2.real + c2.imaginary*c2.imaginary == 0) {cout << "c^2 + d^2 == 0, which is not allowed in complex division\n"; return complex(0,0);}
+        double Re = (real*c2.real + imaginary*c2.imaginary)/(c2.real*c2.real + c2.imaginary*c2.imaginary);
+        double Im = (real*c2.imaginary - imaginary*c2.real)/(c2.real*c2.real + c2.imaginary*c2.imaginary);
+        return complex(Re, Im);
+    }
+private:
+    //operator >> and <<: deal with input and output
+    friend ostream& operator <<(ostream& os, const complex& c)
+    {
+        os << c.real << '+' << c.imaginary << 'i';
+        return os;
+    }
+    friend istream& operator >>(istream& ifs, complex& c)
+    {
+        string str;
+        string s1, s2;
+        ifs >> str;
+        size_t addsign = str.find_first_of('+');
+        s1 = str.substr(0, addsign);
+        c.real = myStr2double(s1);
+        s2 = str.substr(addsign + 1, str.size() - 2 - (addsign + 1) + 1);
+        c.imaginary = myStr2double(s2);
+        return ifs;
+    }
+    //data members:
+    double real;
+    double imaginary;
+};
+
+int main()
+{
+    complex c1, c2;
+    cout << "Please insert 2 complex number form as \'a+bi\'\n";
+    //input and output -> operator >> and <<
+    cin >> c1 >> c2;
+    cout << "The numbers you insert are " << c1  << " " << c2 << endl;
+    //arithmetic operation: operator + - * /
+    cout << "c1 + c2 = " << c1 + c2 << endl;
+    cout << "c1 - c2 = " << c1 - c2 << endl;
+    cout << "c1 * c2 = " << c1 * c2 << endl;
+    cout << "c1 / c2 = " << c1 / c2 << endl;
+}
+
+};
+
+int main()
+{
+    complex c1(3,4), c2(4,5);
+    complex c3 = c1 + c2;
+    cout << c1 + c2 << endl;
+}
+```
+# Dynamic Array
+## What is a dynamic array?
+A **dynamic array** is an array which can control its **capacity** (which would be defined later) *automatically* (or *dynamically*) during the program execution.
+* note: Same methods are used in ```<vector>``` in STL
+## Important Function of a dynamic array
+* `push_back(T& data)`: Push a new object `data` to the end of the array.
+* `pop_back()`: Take the *last* element out of the array.
+* `push_front(T& data)`: Push a new object `data` to the front of the array.
+* `pop_front()`: Take the *first* element out of the array.
+* `insert(iterator pos, T data)`: Insert the data `data` in the position `pos`.
+* `erase(iterator pos)`:  Eliminate the element in position `pos`.
+*  `size()`: return the **size** (*not* **capacity**) of the array.
+*  `empty()`: return whether the array is empty or not.
+## Implementation
+Previously, we have mentioned that a dynamic array can *automatically* control its size during program exeution. But how is it done? Let's take a look at the structure of a dynamic table.
+### What's in a dynamic array?
+    Have picture of dyanmic array here
+* head: The **head** is a *pointer* which indicates the first element of dynamic array (same as convetion arrays).
+* size: The **size** of a vector is the number of elements *actually* in a vector.
+* capacity: The **capacity** of a vector is the *maximum* number of elements a vector can hold.
+    * Note: The **size** and the **capacity** of a dynamic vector are *not necessary* to be equal.
+
+A possible implementation in C++ class:
+```C++
+template <class T>
+class dynamic_array
+{
+private:
+    T*  _data;
+    size_t  _size;
+    size_t  _capacity
+};
+```
+### How's a dynamic array control its capacity?
+If we recall the function `push_back()` metioned above, it is not hard to find that the following question would be raised:
+:::success
+<p style = "text-align:center"> What do we have to do to a dynamic array <em>when the capacity is not enough?</em></p>
+:::
+We would further ask as below:
+:::success
+<p style = "text-align:center">How can we change the capacity of a dynamic array both <em>time-efficiently</em> and <em>memory-efficiently?</em></p>
+:::
+These are the 2 main questions when we design a dynamic array. And here is our solutions:
+* What do we have to do to a dynamic array <em>when 
+the capacity is not enough?</em>
+We have to *expand* our dynamic array when the capacity is not enough. And here is what an exapnsion would do:
+    * *Reallocate* a bigger place for the new array
+    * *Copy* the data from the old array
+    * *Free* the memory of the old array
+* 
+## Time Complexity
+* Amotized Analysis
+```C++=
+template <class T>
+class Array
+{
+public:
+   Array() : _data(0), _size(0), _capacity(0),_isSorted(false) {}
+   ~Array() { delete []_data; }
+
+   class iterator
+   {
+      friend class Array;
+
+   public:
+      iterator(T* n= 0): _node(n) {}
+      iterator(const iterator& i): _node(i._node) {}
+      ~iterator() {} // Should NOT delete _node
+
+      const T& operator * () const { return (*_node); }
+      T& operator * () { return (*_node); }
+      iterator& operator ++ () 
+      {
+         ++_node; 
+         return *(this);
+      }
+      iterator operator ++ (int) 
+      { 
+         iterator temp = *(this);
+         ++_node;
+         return temp; 
+      }
+      iterator& operator -- () 
+      { 
+         --_node;
+         return *(this);    
+      }
+      iterator operator -- (int) 
+      { 
+         iterator temp = *(this);
+         --_node;
+         return temp; 
+      }
+      iterator operator + (int i) const 
+      { 
+         iterator temp(_node + i);
+         return temp; 
+      }
+      iterator& operator += (int i) 
+      { 
+         for(int k = 0; k < i; k++)
+            ++ _node;
+         return *(this); 
+      }
+
+      iterator& operator = (const iterator& i) 
+      { 
+         _node = i._node;
+         return (*this); 
+      }
+
+      bool operator != (const iterator& i) const { return _node != i._node; }
+      bool operator == (const iterator& i) const { return _node == i._node; }
+
+   private:
+      T*    _node;
+   };
+
+   iterator begin() const 
+   {
+      iterator temp(_data);
+      return temp; 
+   }
+   iterator end() const 
+   { 
+      iterator temp(_data +_size);
+      return temp; 
+   }
+   bool empty() const { return _size == 0; }
+   size_t size() const { return _size; }
+
+   T& operator [] (size_t i) { return _data[i]; } //return _data + i?
+   const T& operator [] (size_t i) const { return _data[i]; }
+
+   void push_back(const T& x) 
+   {
+   	//move the whole array to new place when tha capacity is not enough
+      if(_size == 0 || _size == _capacity)
+      {
+          if(!_size) _capacity = 1;
+          else _capacity = _capacity*2;
+          T* _newdata = new T[_capacity];
+          for (int i = 0; i < _size; ++i)
+          {
+              _newdata[i] = _data[i];
+          }
+          delete[] _data;
+         _data = _newdata;
+      }
+      _size++;
+      _data[_size - 1] = x;
+      _isSorted = false;
+   }
+   void pop_front() 
+   {
+       _data[0] = _data[_size - 1];
+       _size--;
+       _isSorted = false;
+   }
+   void pop_back() 
+   { 
+      _size--;
+   }
+   bool erase(iterator pos) 
+   { 
+      if(!_size) return false;
+      *pos = _data[_size - 1]; 
+      --_size;
+      _isSorted = false;
+      return true; 
+   }
+   bool erase(const T& x) 
+   { 
+      for(iterator it = begin(); it != end(); ++it)
+      {
+          if(*it == x) 
+          {
+              erase(it);
+              return true;
+          }
+      }
+   	  return false;
+   }
+   void clear() 
+   {
+      _size = 0;
+      //_isSorted = false;
+   }
+
+   void sort() const 
+   { 
+        if(_isSorted == false)
+        {
+            if (!empty()) ::sort(_data, _data+_size);
+            _isSorted = true;
+        }
+   }
+   // void reserve(size_t n) { ... }
+   // void resize(size_t n) { ... }
+
+private:
+   T*            _data;
+   size_t        _size;       // number of valid elements
+   size_t        _capacity;   // max number of elements
+   mutable bool  _isSorted;   // (optionally) to indicate the array is sorted
+};
+```
+# List
+# Binary Search Tree
