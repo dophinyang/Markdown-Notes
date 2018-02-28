@@ -179,8 +179,10 @@ private:
 ### How's a dynamic array control its capacity?
 If we recall the function `push_back()` metioned above, it is not hard to find that the following question would be raised:
 * What do we have to do to a dynamic array *when the capacity is not enough*?
-We would further ask as below:
+
+After we deal with that question, we would further ask as below:
 * How can we change the capacity of a dynamic array both *time-efficiently* and *memory-efficiently*?
+
 These are the 2 main questions when we design a dynamic array. And here is our solutions:
 
 * What do we have to do to a dynamic array *when 
