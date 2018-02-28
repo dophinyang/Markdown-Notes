@@ -178,9 +178,9 @@ private:
 ```
 ### How's a dynamic array control its capacity?
 If we recall the function `push_back()` metioned above, it is not hard to find that the following question would be raised:
-<p style = "text-align:center"> What do we have to do to a dynamic array <em>when the capacity is not enough?</em></p>
+* What do we have to do to a dynamic array *when the capacity is not enough*?
 We would further ask as below:
-<p style = "text-align:center">How can we change the capacity of a dynamic array both <em>time-efficiently</em> and <em>memory-efficiently?</em></p>
+* How can we change the capacity of a dynamic array both *time-efficiently* and *memory-efficiently*?
 These are the 2 main questions when we design a dynamic array. And here is our solutions:
 
 * What do we have to do to a dynamic array *when 
