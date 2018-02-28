@@ -1,10 +1,3 @@
-# C++ Notes
->[TOC]
->
->[color=#1C86EE]
-
-###### tags: `C++`
-
 # Get Ready in C++
 ## Operator Overloading
 * What is an "Overloading"?
@@ -12,7 +5,7 @@
 * What is an operator?
 An operator is a symbol that tells the compiler to perform specific mathematical or logical manipulations.
     * For example:
-      ```C++=
+      ```C++
       complex a = 2 + i,b = 3 + 2i, c; 
       //complex is a custom type, you have to define it in advanced
       c = a + b;
@@ -54,7 +47,7 @@ It is often to define custom class(data type) in C++ programming. For a compiler
         * Prefix decrement : `--x`
         * Postfix decrement: `x--`
 * An operator overloading example:
-```C++=
+```C++
 #include <iostream>
 #include <string>
 using namespace std;
@@ -185,13 +178,9 @@ private:
 ```
 ### How's a dynamic array control its capacity?
 If we recall the function `push_back()` metioned above, it is not hard to find that the following question would be raised:
-:::success
 <p style = "text-align:center"> What do we have to do to a dynamic array <em>when the capacity is not enough?</em></p>
-:::
 We would further ask as below:
-:::success
 <p style = "text-align:center">How can we change the capacity of a dynamic array both <em>time-efficiently</em> and <em>memory-efficiently?</em></p>
-:::
 These are the 2 main questions when we design a dynamic array. And here is our solutions:
 * What do we have to do to a dynamic array <em>when 
 the capacity is not enough?</em>
